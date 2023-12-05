@@ -37,27 +37,45 @@ class Game:
         self.clock = pg.time.Clock()
         self.running = True
 
+    def new(self):
 
-# Strings
-    class string():
-        def __init__(self,x,y,color1,color2,key):
-            self.x = x
-            self.y = y 
-            self. color1 = color1
-            self. color2 = color2
-            self.key = key 
-            self.rect = pg.Rect(self.x,self.y,50,20)
-    strings = [
-    string(100,1200,(255,0,0),(220,0,0),pg.K_s),
-    string(200,1200,(0,255,0),(0,220,0),pg.K_d),
-    string(300,1200,(0,0,255),(0,0,220),pg.K_f),
-    string(400,1200,(255,255,0),(220,220,0),pg.K_j),
-    string(500,1200,(0,255,255),(0,220,220),pg.K_k),
-    string(600,1200,(255,0,255),(220,0,220),pg.K_l),]
-    def draw(self):
-        self.screen.fill(BLACK)
-        for string in strings:
-            pg.draw.rect(self.screen,string.color1,string.rect)
+        for s in KEYS_LIST:
+            # instantiation of the Platform class
+            Keys = Key(*k)
+            self.all_sprites.add(Keys)
+            self.all_platforms.add(Keys)
+        # Strings
+        class string():
+            def __init__(self,x,y,color1,color2,key):
+                self.x = x
+                self.y = y 
+                self. color1 = color1
+                self. color2 = color2
+                self.key = key 
+                self.rect = pg.Rect(self.x,self.y,50,20)
+            strings = [
+            string(100,1200,(255,0,0),(220,0,0),pg.K_s),
+            string(200,1200,(0,255,0),(0,220,0),pg.K_d),
+            string(300,1200,(0,0,255),(0,0,220),pg.K_f),
+            string(400,1200,(255,255,0),(220,220,0),pg.K_j),
+            string(500,1200,(0,255,255),(0,220,220),pg.K_k),
+            string(600,1200,(255,0,255),(220,0,220),pg.K_l),]
+
+
+
+        def draw(self):
+            ############ Draw ################
+            # draw the background screen
+            self.screen.fill(BLACK)
+            # draw all sprites
+            # self.all_sprites.draw(self.screen)
+            # self.draw_text("Score: " + str(self.score), 22, WHITE, WIDTH/2, HEIGHT/10)
+            # buffer - after drawing everything, flip display
+            # draw the background screen
+            # draw timer text
+            # self.draw_text("Tick: " + str(cd.delta), 22, RED, 64, HEIGHT / 24)
+        # buffer - after drawing everything, flip display
+            pg.display.flip()
 
 while True:
     for event in pg.event.get():

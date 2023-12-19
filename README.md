@@ -17,18 +17,24 @@ This is going to be a rythem game with six keys (S,D,F,J,K,L). I am going to hav
 * Turtle
 * Math
 * Python
+* mixer
+* mp3 file
+* .txt map file
 
 
 ### Installing
 
 * How/where to download your program
 * Any modifications needed to be made to files/folders
+* Download the main.py file, Scenery.mp3, and Scenery.txt file
+* Make sure the main.py, Scenery.mp3, and Scenery.txt file are all in the same folder/ 
 
 ### Executing program
 
-* How to run the program
-* Step-by-step bullets
+* How to run the program:
 * Download Dependencies 
+* Open in Python
+* make sure all files are in the same location in the same folder
 * Run file in python
 ```
 code blocks for commands
@@ -49,11 +55,11 @@ command to run if program contains helper info
 
 ## Version History
 
-* none yet
+* Final Push
 
 ## License
 
-This project is licensed under the [NAME HERE] License - see the LICENSE.md file for details
+This project is licensed under the MIT License - see the LICENSE.md file for details
 
 ## Acknowledgments
 

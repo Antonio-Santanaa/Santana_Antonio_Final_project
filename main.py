@@ -8,7 +8,6 @@
 # Make a game like guitar hero
 # Have multiple stages/songs
 # Have Basic controls 
-# Have a score system
 
 # Sources---------------------------------------------------------------------------------------------------------------
 # https://www.youtube.com/watch?v=_AaUKSjTNY8&t=37s
@@ -20,69 +19,113 @@
 # https://stackoverflow.com/questions/26767591/pygame-error-video-system-not-initialized
 
 # Import Libraries & Moduels 
-import pygame as pg 
-from pygame.sprite import Sprite
-import os
-import math 
-from Settings import *
-from Sprites import *
+import pygame as pg
 
-# Display/Screen-------------------------------------------------------------------------------------------------------
-class Game:
-    def __init__(self):
-        pg.init()
-        pg.mixer.init()
-        self.screen = pg.display.set_mode((WIDTH, HEIGHT))
-        pg.display.set_caption("My Game...")
-        self.clock = pg.time.Clock()
-        self.running = True
+#Mixer library allows us to get the music and play it 
+from pygame import mixer
 
-    def new(self):
+mixer.init()
 
-        for s in KEYS_LIST:
-            # instantiation of the Platform class
-            Keys = Key(*k)
-            self.all_sprites.add(Keys)
-            self.all_platforms.add(Keys)
-        # Strings
-        class string():
-            def __init__(self,x,y,color1,color2,key):
-                self.x = x
-                self.y = y 
-                self. color1 = color1
-                self. color2 = color2
-                self.key = key 
-                self.rect = pg.Rect(self.x,self.y,50,20)
-            strings = [
-            string(100,1200,(255,0,0),(220,0,0),pg.K_s),
-            string(200,1200,(0,255,0),(0,220,0),pg.K_d),
-            string(300,1200,(0,0,255),(0,0,220),pg.K_f),
-            string(400,1200,(255,255,0),(220,220,0),pg.K_j),
-            string(500,1200,(0,255,255),(0,220,220),pg.K_k),
-            string(600,1200,(255,0,255),(220,0,220),pg.K_l),]
+# The clock is pur "tempo"/"BPM"
+clock = pg.time.Clock() 
+
+#This is the parameters of the window 
+
+screen = pg.display.set_mode((1425, 950))
+
+# Setting up the Background
+class Background(pg.sprite.Sprite):
+    def __init__(self, image_file, location):
+        pg.sprite.Sprite.__init__(self)  
+        self.image = pg.image.load(image_file)
+        self.rect = self.image.get_rect()
+        self.rect.left, self.rect.top = location
+
+BackGround = Background('pianobg.jpg', [0,0])
+# Keys/notes
+class Key():
+    def __init__(self,x,y,color1,color2,key):
+        self.x = x
+        self.y = y
+        self.color1 = color1
+        self.color2 = color2
+        self.key = key
+        self.rect = pg.Rect(self.x,self.y,100,40)
+        # determining if the key is pushed or not
+        self.push = False
+
+#List of all notes/keys
+
+keys = [
+    Key(400,800,(255,0,0),(220,0,0),pg.K_a),
+    Key(500,800,(0,255,0),(0,220,0),pg.K_s),
+    Key(600,800,(0,0,255),(0,0,220),pg.K_d),
+    Key(700,800,(255,255,0),(220,220,0),pg.K_j),
+    Key(800,800,(255,0,255),(220,0,220),pg.K_k),
+    Key(900,800,(0,255,255),(0,220,220),pg.K_l),
+]
 
 
+#Creating the track
+# This is the map we create in the "scenery.txt" file
+def load(map):
+    rects = []
+    # loads/plays the music S
+    mixer.music.load(map + ".mp3")
+    mixer.music.play()
+    f = open(map + ".txt", 'r')
+    # This reads the lines of zero and turns them into notes on the screen 
+    data = f.readlines()
 
-        def draw(self):
-            ############ Draw ################
-            # draw the background screen
-            self.screen.fill(BLACK)
-            # draw all sprites
-            # self.all_sprites.draw(self.screen)
-            # self.draw_text("Score: " + str(self.score), 22, WHITE, WIDTH/2, HEIGHT/10)
-            # buffer - after drawing everything, flip display
-            # draw the background screen
-            # draw timer text
-            # self.draw_text("Tick: " + str(cd.delta), 22, RED, 64, HEIGHT / 24)
-        # buffer - after drawing everything, flip display
-            pg.display.flip()
+    for y in range(len(data)):
+        for x in range(len(data[y])):
+            if data[y][x] == '0': 
+              # append() attatches another element/string to the END of a list
+                rects.append(pg.Rect(keys[x].rect.centerx - 25,y * -100,50,25))
+    return rects
+# Loading the beat map and sound, .txt file and .mp3 file
+map_rect = load("Scenery")
+# Background image 
+bg = pg.image.load("pianobg.jpg")
 
+#INSIDE OF THE GAME LOOP
+screen.blit(bg, (1425, 900))
+
+# While loop & ability to exit game
+# Background image display
 while True:
+    screen.fill([255, 255, 255])
+    screen.blit(BackGround.image, BackGround.rect)
+    screen.fill((0,0,0))
     for event in pg.event.get():
         if event.type == pg.QUIT:
             pg.quit()
             quit()
 
-pg.display.update()
+    #This is what determines whether the key has been pressed or not, and changes the color of the key when they are pressed
+    k = pg.key.get_pressed()
+    for key in keys:
+        if k[key.key]:
+            pg.draw.rect(screen,key.color1,key.rect)
+            key.push = False
+        if not k[key.key]: 
+            pg.draw.rect(screen,key.color2,key.rect)
+            key.push = True
+        
+    for rect in map_rect:
+      # Draws our beatmap
+        pg.draw.rect(screen,(200,0,0),rect)
+        rect.y += 5
+        for key in keys: 
+            # If the key is pressed the note will be removed 
+            if key.rect.colliderect(rect) and not key.push:
+                map_rect.remove(rect)
+                key.push = True
+                # This break causes the loop to continue unless the condition is met which is whether the key is pushed or not
+                break
 
-# etetete   
+        
+
+# updating the display and our tempo/rythem/bpm
+    pg.display.update()
+    clock.tick(60)

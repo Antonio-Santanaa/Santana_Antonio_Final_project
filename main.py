@@ -26,6 +26,8 @@ from pygame import mixer
 
 mixer.init()
 
+score = 0 
+
 # The clock is pur "tempo"/"BPM"
 clock = pg.time.Clock() 
 
@@ -76,10 +78,13 @@ def load(map):
     f = open(map + ".txt", 'r')
     # This reads the lines of zero and turns them into notes on the screen 
     data = f.readlines()
-
+# len returns the length/lines of text in the .txt file
+    # the range is derived from the 0's
     for y in range(len(data)):
+        # In this case data is a string but it can be numeric, dictionary, boolean, string, set, or sequence type
         for x in range(len(data[y])):
-            if data[y][x] == '0': 
+              if data[y][x] == '0': 
+                # The data reads the "0"string and takes its x and y values to transport them on the screen
               # append() attatches another element/string to the END of a list
                 rects.append(pg.Rect(keys[x].rect.centerx - 25,y * -100,50,25))
     return rects
@@ -89,6 +94,7 @@ map_rect = load("Scenery")
 bg = pg.image.load("pianobg.jpg")
 
 #INSIDE OF THE GAME LOOP
+# Places an image on the screen, in this case background image 
 screen.blit(bg, (1425, 900))
 
 # While loop & ability to exit game
@@ -114,7 +120,7 @@ while True:
         
     for rect in map_rect:
       # Draws our beatmap
-        pg.draw.rect(screen,(200,0,0),rect)
+        pg.draw.rect(screen,(255,255,255),rect)
         rect.y += 5
         for key in keys: 
             # If the key is pressed the note will be removed 
